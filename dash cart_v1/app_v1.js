@@ -89,26 +89,11 @@ function getDataSetForCategory(results, category) {
     }
 }
 
-function calculateTotalCrew(vehicles) {
-    return vehicles.reduce((sum, vehicle) => sum + parseInt(vehicle.crew), 0);
-}
-
 async function init() {
     const promises = categories.map(category => fetchData(category));
     const results = await Promise.all(promises);
     const data = categories.map((category, index) => getDataSetForCategory(results[index], category));
-
-    // Calculate total crew for vehicles
-    const vehiclesData = results[categories.indexOf("vehicles")];
-    const totalCrew = calculateTotalCrew(vehiclesData);
-    displaySummary(totalCrew);
-
     setupPagination(data);
-}
-
-function displaySummary(totalCrew) {
-    const summaryCard = document.getElementById('summaryCard');
-    summaryCard.innerHTML = `<h2>Total Crew: ${totalCrew}</h2>`;
 }
 
 function setupPagination(data) {
