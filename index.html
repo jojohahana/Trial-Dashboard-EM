@@ -8,18 +8,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <div id="summaryCard" class="card">
-            <!-- Summary of crew will be displayed here -->
-        </div>
-        <div id="gridContainer" class="grid-container">
-            <!-- Canvas elements will be inserted here by JavaScript -->
-        </div>
-        <div class="pagination">
-            <button id="prevPage" onclick="prevPage()">Previous</button>
-            <button id="nextPage" onclick="nextPage()">Next</button>
-        </div>
+    <h2>SWAPI GRID MULTI CHART</h2>
+    <div class="grid-container">
+        <div class="grid-item"><canvas id="peopleChart"></canvas></div>
+        <div class="grid-item"><canvas id="planetsChart"></canvas></div>
+        <div class="grid-item"><canvas id="filmsChart"></canvas></div>
+        <div class="grid-item"><canvas id="speciesChart"></canvas></div>
+        <div class="grid-item"><canvas id="vehiclesChart"></canvas></div>
+        <div class="grid-item"><canvas id="starshipsChart"></canvas></div>
     </div>
+
     <script src="app.js"></script>
 </body>
 </html>

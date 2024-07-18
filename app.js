@@ -1,8 +1,6 @@
 const baseURL = "https://swapi.dev/api/";
 
 const categories = ["people", "planets", "films", "species", "vehicles", "starships"];
-let currentPage = 0;
-const itemsPerPage = 6; // Number of grids per page
 
 async function fetchData(category) {
     let allData = [];
@@ -28,127 +26,71 @@ function generateRandomColor() {
     return `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.7)`;
 }
 
-function getDataSetForCategory(results, category) {
-    switch (category) {
-        case 'people':
-            return {
-                labels: results.map(person => person.name),
-                datasets: [{
-                    label: 'Height',
-                    data: results.map(person => person.height),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        case 'planets':
-            return {
-                labels: results.map(planet => planet.name),
-                datasets: [{
-                    label: 'Population',
-                    data: results.map(planet => planet.population),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        case 'films':
-            return {
-                labels: results.map(film => film.title),
-                datasets: [{
-                    label: 'Episode',
-                    data: results.map(film => film.episode_id),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        case 'species':
-            return {
-                labels: results.map(species => species.name),
-                datasets: [{
-                    label: 'Average Lifespan',
-                    data: results.map(species => species.average_lifespan),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        case 'vehicles':
-            return {
-                labels: results.map(vehicle => vehicle.name),
-                datasets: [{
-                    label: 'Cost in Credits',
-                    data: results.map(vehicle => vehicle.cost_in_credits),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        case 'starships':
-            return {
-                labels: results.map(starship => starship.name),
-                datasets: [{
-                    label: 'Crew Size',
-                    data: results.map(starship => starship.crew),
-                    backgroundColor: results.map(() => generateRandomColor())
-                }]
-            };
-        default:
-            return {};
-    }
-}
-
-function calculateTotalCrew(vehicles) {
-    return vehicles.reduce((sum, vehicle) => sum + parseInt(vehicle.crew), 0);
-}
-
 async function init() {
     const promises = categories.map(category => fetchData(category));
     const results = await Promise.all(promises);
-    const data = categories.map((category, index) => getDataSetForCategory(results[index], category));
 
-    // Calculate total crew for vehicles
-    const vehiclesData = results[categories.indexOf("vehicles")];
-    const totalCrew = calculateTotalCrew(vehiclesData);
-    displaySummary(totalCrew);
-
-    setupPagination(data);
-}
-
-function displaySummary(totalCrew) {
-    const summaryCard = document.getElementById('summaryCard');
-    summaryCard.innerHTML = `<h2>Total Crew: ${totalCrew}</h2>`;
-}
-
-function setupPagination(data) {
-    const totalPages = Math.ceil(data.length / itemsPerPage);
-
-    function renderPage(page) {
-        const gridContainer = document.getElementById('gridContainer');
-        gridContainer.innerHTML = '';
-
-        const start = page * itemsPerPage;
-        const end = start + itemsPerPage;
-        const itemsToShow = data.slice(start, end);
-
-        itemsToShow.forEach((dataSet, index) => {
-            const canvas = document.createElement('canvas');
-            canvas.id = `chart${start + index}`;
-            canvas.classList.add('grid-item');
-            gridContainer.appendChild(canvas);
-            createChart(canvas.getContext('2d'), 'bar', dataSet, { responsive: true });
-        });
-
-        document.getElementById('prevPage').disabled = page === 0;
-        document.getElementById('nextPage').disabled = page === totalPages - 1;
-    }
-
-    renderPage(currentPage);
-
-    window.nextPage = () => {
-        if (currentPage < totalPages - 1) {
-            currentPage++;
-            renderPage(currentPage);
-        }
+    // Example data processing for each category
+    const peopleData = {
+        labels: results[0].map(person => person.name),
+        datasets: [{
+            label: 'Height',
+            data: results[0].map(person => person.height),
+            backgroundColor: results[0].map(() => generateRandomColor())
+        }]
     };
 
-    window.prevPage = () => {
-        if (currentPage > 0) {
-            currentPage--;
-            renderPage(currentPage);
-        }
+    const planetsData = {
+        labels: results[1].map(planet => planet.name),
+        datasets: [{
+            label: 'Population',
+            data: results[1].map(planet => planet.population),
+            backgroundColor: results[1].map(() => generateRandomColor())
+        }]
     };
+
+    const filmsData = {
+        labels: results[2].map(film => film.title),
+        datasets: [{
+            label: 'Episode',
+            data: results[2].map(film => film.episode_id),
+            backgroundColor: results[2].map(() => generateRandomColor())
+        }]
+    };
+
+    const speciesData = {
+        labels: results[3].map(species => species.name),
+        datasets: [{
+            label: 'Average Lifespan',
+            data: results[3].map(species => species.average_lifespan),
+            backgroundColor: results[3].map(() => generateRandomColor())
+        }]
+    };
+
+    const vehiclesData = {
+        labels: results[4].map(vehicle => vehicle.name),
+        datasets: [{
+            label: 'Cost in Credits',
+            data: results[4].map(vehicle => vehicle.cost_in_credits),
+            backgroundColor: results[4].map(() => generateRandomColor())
+        }]
+    };
+
+    const starshipsData = {
+        labels: results[5].map(starship => starship.name),
+        datasets: [{
+            label: 'Crew Size',
+            data: results[5].map(starship => starship.crew),
+            backgroundColor: results[5].map(() => generateRandomColor())
+        }]
+    };
+
+    createChart(document.getElementById('peopleChart').getContext('2d'), 'bar', peopleData, { responsive: true });
+    createChart(document.getElementById('planetsChart').getContext('2d'), 'bar', planetsData, { responsive: true });
+    createChart(document.getElementById('filmsChart').getContext('2d'), 'line', filmsData, { responsive: true });
+    createChart(document.getElementById('speciesChart').getContext('2d'), 'bar', speciesData, { responsive: true });
+    createChart(document.getElementById('vehiclesChart').getContext('2d'), 'bar', vehiclesData, { responsive: true });
+    createChart(document.getElementById('starshipsChart').getContext('2d'), 'bar', starshipsData, { responsive: true });
 }
 
 init();
